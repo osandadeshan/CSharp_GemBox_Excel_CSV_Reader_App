@@ -3,28 +3,25 @@ using GemBox.Spreadsheet;
 
 namespace ExcelCsvReaderApp.Util
 {
-    public class ExcelReader
+    public class CsvReader
     {
-        private readonly string _excelFilePath;
+        private readonly string _csvFilePath;
 
-        public ExcelReader(string excelFilePath)
+        public CsvReader(string csvFilePath)
         {
-            _excelFilePath = excelFilePath;
+            _csvFilePath = csvFilePath;
         }
 
-        public string GetCellValue(string sheetName, int rowNumber, int columnNumber)
+        public string GetCellValue(int rowNumber, int columnNumber)
         {
             // If using Professional version, put your serial key below
             SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
 
-            // Load Excel workbook from file path
-            var workbook = ExcelFile.Load(_excelFilePath);
+            // Load CSV workbook from file path
+            var workbook = ExcelFile.Load(_csvFilePath);
 
-            // Select the worksheet by name
-            var worksheet = workbook.Worksheets[sheetName];
-
-            // Display sheet's name
-            // Console.WriteLine("SheetName is: " + worksheet.Name);
+            // Select the worksheet by index
+            var worksheet = workbook.Worksheets[0];
 
             // Select the row by row number
             var row = worksheet.Rows[rowNumber - 1];
@@ -35,11 +32,11 @@ namespace ExcelCsvReaderApp.Util
             return cell.Value.ToString();
         }
 
-        public int GetRowNumberByCellValue(string sheetName, string expectedCellValue, int columnNumber)
+        public int GetRowNumberByCellValue(string expectedCellValue, int columnNumber)
         {
             SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
-            var workbook = ExcelFile.Load(_excelFilePath);
-            var worksheet = workbook.Worksheets[sheetName];
+            var workbook = ExcelFile.Load(_csvFilePath);
+            var worksheet = workbook.Worksheets[0];
             var numberOfRows = worksheet.Rows.Count;
 
             var rowNumber = 0;
@@ -56,18 +53,17 @@ namespace ExcelCsvReaderApp.Util
 
             if (rowNumber == 0)
             {
-                throw new KeyNotFoundException(
-                    "Failed to find '" + expectedCellValue + "' in sheet '" + sheetName + "'");
+                throw new KeyNotFoundException("Failed to find '" + expectedCellValue + "' in CSV file");
             }
 
             return rowNumber;
         }
 
-        public int GetNumberOfDuplicatesByCellValue(string sheetName, string expectedCellValue, int columnNumber)
+        public int GetNumberOfDuplicatesByCellValue(string expectedCellValue, int columnNumber)
         {
             SpreadsheetInfo.SetLicense("FREE-LIMITED-KEY");
-            var workbook = ExcelFile.Load(_excelFilePath);
-            var worksheet = workbook.Worksheets[sheetName];
+            var workbook = ExcelFile.Load(_csvFilePath);
+            var worksheet = workbook.Worksheets[0];
             var numberOfRows = worksheet.Rows.Count;
 
             var count = 0;
